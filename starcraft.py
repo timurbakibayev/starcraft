@@ -9,6 +9,7 @@ class Zerg():
     bullet = None
     attack = None
     fire = 5
+    life = 100
 
 
 def collide(zerg1, zerg2):
@@ -193,6 +194,24 @@ while not done:
                 if zerg.bullet is not None:
                     zerg.bullet = x,y
 
+    for zerg in zergs: # for each zerg
+        for other_zerg in zergs: # for each other zerg
+            if other_zerg != zerg: # make sure this is another zerg, no self-fire
+                if zerg.bullet is not None: # if bullet exists
+                    x,y = zerg.bullet # get coordinates of the bullet
+                    if other_zerg.x < x < other_zerg.x + other_zerg.w:
+                        if other_zerg.y < y < other_zerg.y + other_zerg.h:
+                            other_zerg.life -= 10
+                            if other_zerg.life <= 0:
+                                zergs.remove(other_zerg)
+                            zerg.fire -= 1
+                            if zerg.fire > 0:
+                                x = zerg.x + zerg.w / 2
+                                y = zerg.y + zerg.h / 2
+                                zerg.bullet = x,y
+                            else:
+                                zerg.bullet = None
+
 
     textsurface = myfont.render(str(counter), False, (0, 0, 0))
     for z in zergs:
@@ -201,6 +220,11 @@ while not done:
 
     for z in zergs:
         screen.blit(z.img, (z.x, z.y))
+        pygame.draw.rect(screen, (25, 224, 224), [z.x, z.y - 10, z.w, 8], 1)
+        if z.life > 50:
+            pygame.draw.rect(screen, (25, 224, 10), [z.x, z.y - 10, z.w/100 * z.life, 8], 0)
+        else:
+            pygame.draw.rect(screen, (224, 25, 10), [z.x, z.y - 10, z.w / 100 * z.life, 8], 0)
 
     for z in zergs:
         if z.bullet is not None:
