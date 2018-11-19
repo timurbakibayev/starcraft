@@ -8,6 +8,7 @@ class Zerg():
     zy = 0
     bullet = None
     attack = None
+    fire = 5
 
 
 def collide(zerg1, zerg2):
@@ -131,8 +132,7 @@ while not done:
                 if selected is not None:
                     selected.attack = pygame.mouse.get_pos()
                     selected.bullet = (selected.x + selected.w/2, selected.y + selected.h/2)
-
-
+                    selected.fire = 5
 
     #logic
     for zerg in zergs:
@@ -181,12 +181,17 @@ while not done:
             if zerg.bullet is not None:
                 x, y = zerg.bullet
                 x1, y1 = zerg.attack
-                x = x + (x1-x)/10
-                y = y + (y1-y)/10
+                x = x + (x1-x)/20
+                y = y + (y1-y)/20
                 if abs(x-x1) < 3 and abs(y-y1) < 3:
-                    x = zerg.x + zerg.w/2
-                    y = zerg.y + zerg.h/2
-                zerg.bullet = x,y
+                    zerg.fire -= 1
+                    if zerg.fire > 0:
+                        x = zerg.x + zerg.w/2
+                        y = zerg.y + zerg.h/2
+                    else:
+                        zerg.bullet = None
+                if zerg.bullet is not None:
+                    zerg.bullet = x,y
 
 
     textsurface = myfont.render(str(counter), False, (0, 0, 0))
